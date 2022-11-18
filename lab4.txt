@@ -1,0 +1,74 @@
+Zad 1
+
+DELETE FROM postac WHERE id_postaci = 6;
+DELETE FROM postac WHERE id_postaci = 7;
+
+ALTER TABLE walizka DROP FOREIGN KEY walizka_ibfk_1
+ALTER TABLE przetwory DROP FOREIGN KEY przetwory_ibfk_2;
+ALTER TABLE przetwory DROP FOREIGN KEY przetwory_ibfk_2;
+ALTER TABLE postac DROP id_postaci;
+
+Zad 2
+
+UPDATE postac SET pesel = 12345678910 WHERE nazwa = 'Biorn';
+UPDATE postac SET pesel = 12312312312 WHERE nazwa = 'Drozd';
+UPDATE postac SET pesel = 12345678911 WHERE nazwa = 'Tesciowa';
+UPDATE postac SET pesel = 12345678900 WHERE nazwa = 'Svion';
+UPDATE postac SET pesel = 12345678000 WHERE nazwa = 'Zbyszek';
+UPDATE postac SET pesel = 12345678005 WHERE nazwa = 'Marek';
+
+ALTER TABLE postac ADD FOREIGN KEY(pesel);
+
+ALTER TABLE postac MODIFY rodzaj ENUM('Wiking','Ptak','Kobieta','Syrena');
+INSERT INTO postac VALUES ('Gertruda Nieszczera', 'Syrena', '1670-12-05', '13', NULL, NULL, '53264783209');
+
+Zad 3
+
+UPDATE postac SET id_statku = 'Maraiana' WHERE nazwa LIKE '%a%';
+
+SELECT * FROM statek;
+
+UPDATE statek SET max_ladownosc = (max_ladownosc * 0.7) WHERE data_dokowania BETWEEN ('1901-01-01') AND ('1999-12-31');
+
+
+alter table postac add CHECK(wiek < 1000);
+
+Zad 4
+
+ALTER TABLE postac MODIFY rodzaj ENUM('Wiking','Ptak','Kobieta','Syrena','waz');
+
+INSERT INTO postac VALUES('Loko', 'waz', '2000-09-09','2',NULL,NULL,'21372137213');
+
+CREATE TABLE `marynarz` (
+  `nazwa` varchar(40) DEFAULT NULL,
+  `rodzaj` enum('Wiking','Ptak','Kobieta','Syrena','waz') DEFAULT NULL,
+  `data_ur` date DEFAULT NULL,
+  `wiek` int unsigned DEFAULT NULL,
+  `funkcja` varchar(100) DEFAULT NULL,
+  `id_statku` varchar(60) DEFAULT NULL,
+  `pesel` char(11) NOT NULL,
+  PRIMARY KEY (`pesel`),
+  KEY `id_statku` (`id_statku`),
+  CONSTRAINT `marynarz_ibfk_1` FOREIGN KEY (`id_statku`) REFERENCES `statek` (`nazwa_statku`)
+);
+
+
+INSERT INTO marynarz
+SELECT * FROM postac
+WHERE id_statku IS NOT NULL;
+
+Zad 5
+
+UPDATE postac SET id_statku=NULL;
+
+DELETE FROM postac WHERE nazwa='Zbyszek';
+DELETE FROM marynarz WHERE nazwa='Zbyszek';
+
+ALTER TABLE marynarz DROP FOREIGN KEY marynarz_ibfk_1;
+DELETE FROM statek;
+
+ALTER TABLE postac DROP FOREIGN KEY postac_ibfk_1;
+DROP TABLE statek;
+
+CREATE TABLE zwierz (id INT PRIMARY KEY AUTO_INCREMENT, nazwa VARCHAR(100), wiek INT);
+INSERT INTO zwierz SELECT NULL, nazwa, wiek FROM postac WHERE rodzaj = 'ptak' OR rodzaj = 'waz';
